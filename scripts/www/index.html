@@ -201,6 +201,41 @@
         display: none !important;
       }
     }
+
+    /* ========== 博文板块样式 ========== */
+    #blog .blog-post {
+      margin: 15px 0;
+      border: 1px solid rgba(0, 243, 255, 0.3);
+      background: rgba(0, 10, 20, 0.4);
+      padding: 12px;
+      cursor: pointer;
+    }
+
+    #blog .blog-post summary {
+      color: #00f3ff;
+      font-weight: bold;
+      list-style: none;
+      outline: none;
+    }
+
+    #blog .blog-post summary::marker,
+    #blog .blog-post summary::-webkit-details-marker {
+      display: none;
+    }
+
+    #blog .blog-post[open] summary {
+      color: #b967ff;
+      text-shadow: 0 0 8px rgba(185, 103, 255, 0.7);
+    }
+
+    #blog .blog-content {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed rgba(0, 243, 255, 0.2);
+      line-height: 1.7;
+      white-space: pre-wrap; /* 保留手动换行 */
+      color: #d0d0ff;
+    }
   </style>
 </head>
 <body>
@@ -211,6 +246,7 @@
     <a href="#home">首页</a>
     <a href="#games">游戏舱</a>
     <a href="#posts">日志</a>
+    <a href="#blog">文章</a>
     <a href="#about">终端</a>
   </nav>
 
@@ -246,8 +282,74 @@
       <h2>📜 最近日志</h2>
       <ul style="list-style: square; padding-left: 20px; margin-top: 10px;">
         <li>[2026-01-10] 更新成了现在的样子 &lt; 12ms</li>
-        
       </ul>
+    </section>
+
+    <section id="blog" class="panel">
+      <h2>📑 博文存档</h2>
+
+
+           <details class="blog-post">
+        <summary>[2026-02-01] 无妨！</summary>
+        <div class="blog-content">
+俺的蜜雪冰城1元代金券失效了，由于本人宽容大方，加之本人拥有一定实力，
+现决定不予追究，就当放蜜雪老板一条生路了😏
+        </div>
+      </details>
+      <details class="blog-post">
+        <summary>[2026-02-01] 贪吃蛇的赛博重生</summary>
+        <div class="blog-content">
+今天终于把贪吃蛇移植到了移动端！
+
+之前在 PC 上玩得很爽，但手机上没法操作。
+于是我在 CSS 里加了一个 grid 布局的虚拟方向键，
+只在屏幕宽度 ≤768px 时显示。
+
+技术细节：
+- 使用了 :active 伪类实现按下反馈
+- 防止圆角：全局 border-radius: 0 !important
+- 方向键绑定到 JS 的 dx/dy 控制逻辑
+
+效果炸裂！
+        </div>
+      </details>
+
+      
+      <details class="blog-post">
+        <summary>[2026-01-20] 纯前端博客哲学</summary>
+        <div class="blog-content">
+为什么我要做一个单 HTML 文件的博客？
+
+因为：
+1. 不依赖服务器
+2. 不怕被封（只要文件在）
+3. 极致可控 —— 每个像素都是我的意志
+
+未来计划：
+- 加更多复古终端特效
+- 写一个 ASCII 动画播放器
+- 把整个博客编译成 Brainfuck（开玩笑的）
+
+记住：真正的低客，从不用数据库。
+        </div>
+      </details>
+ 
+
+      <!-- ✏️ 在这里添加你的新文章 -->
+      <!--
+      <details class="blog-post">
+        <summary>[YYYY-MM-DD] 你的标题</summary>
+        <div class="blog-content">
+这里写你的长文内容。
+可以换行，可以空行，支持中文、英文、符号。
+甚至可以这样排版：
+
+function neo() {
+  console.log("I am the one.");
+}
+        </div>
+      </details>
+      -->
     </section>
 
     <section id="about" class="panel">
