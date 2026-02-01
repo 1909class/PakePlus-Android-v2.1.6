@@ -1,11 +1,432 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>PakePlus</title>
-    </head>
-    <body>
-        PakePlus
-    </body>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>神秘的新版钊哥博客</title>
+  <style>
+    /* ========== 全局重置 & 赛博朋克基础样式 ========== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      border-radius: 0 !important; /* 禁止一切圆角 */
+    }
+
+    html, body {
+      height: 100%;
+      overflow-x: hidden;
+    }
+
+    body {
+      background-color: #0a0a0f;
+      background-image:
+        linear-gradient(rgba(0, 243, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 243, 255, 0.02) 1px, transparent 1px);
+      background-size: 20px 20px;
+      color: #e0e0ff;
+      font-family: 'Courier New', monospace;
+      line-height: 1.6;
+      position: relative;
+    }
+
+    /* 扫描线效果 */
+    body::after {
+      content: "";
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: linear-gradient(to bottom, transparent 49%, rgba(0, 255, 200, 0.07) 50%, transparent 51%);
+      animation: scan 7s linear infinite;
+      pointer-events: none;
+      z-index: 10000;
+    }
+
+    @keyframes scan {
+      0% { transform: translateY(-100%); }
+      100% { transform: translateY(100vh); }
+    }
+
+    /* 霓虹标题 - 带故障效果 */
+    .glitch-title {
+      font-size: 2.8rem;
+      text-align: center;
+      margin: 20px 0;
+      color: #00f3ff;
+      text-shadow: 0 0 8px #00f3ff, 0 0 16px #00f3ff;
+      position: relative;
+      display: inline-block;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .glitch-title:hover::before {
+      animation: glitch-anim 0.2s infinite alternate-reverse;
+      content: "NEO.BLOG";
+      position: absolute;
+      top: 0; left: 0;
+      color: #ff00c8;
+      text-shadow: 0 0 8px #ff00c8;
+      clip: rect(0, 9999px, 0, 0);
+    }
+
+    @keyframes glitch-anim {
+      0% { clip: rect(10px, 9999px, 20px, 0); transform: translate(-2px, 0); }
+      100% { clip: rect(30px, 9999px, 40px, 0); transform: translate(2px, 0); }
+    }
+
+    /* 导航栏 */
+    .cyber-nav {
+      text-align: center;
+      padding: 10px;
+      border-bottom: 2px solid #00f3ff;
+      margin-bottom: 30px;
+    }
+
+    .cyber-nav a {
+      color: #b967ff;
+      text-decoration: none;
+      padding: 8px 16px;
+      margin: 0 8px;
+      border: 1px solid transparent;
+      font-weight: bold;
+      transition: none; /* 不要平滑！ */
+    }
+
+    .cyber-nav a:hover {
+      border: 1px solid #ff00c8;
+      color: #ff00c8;
+      text-shadow: 0 0 8px #ff00c8;
+    }
+
+    /* 内容面板 */
+    .panel {
+      border: 2px solid #00f3ff;
+      padding: 20px;
+      margin: 20px auto;
+      background: rgba(10, 10, 20, 0.7);
+      max-width: 800px;
+      box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+    }
+
+    .panel h2 {
+      color: #00f3ff;
+      margin-bottom: 15px;
+      font-size: 1.6rem;
+    }
+
+    /* 贪吃蛇容器 */
+    #snake-container {
+      width: 100%;
+      height: 400px;
+      background: #000;
+      border: 2px solid #b967ff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    canvas#snake-canvas {
+      image-rendering: pixelated;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: crisp-edges;
+    }
+
+    /* 页脚 */
+    .cyber-footer {
+      text-align: center;
+      padding: 20px;
+      color: #555588;
+      font-size: 0.9rem;
+      border-top: 1px dashed #333;
+      margin-top: 40px;
+    }
+
+    /* 滚动条也赛博一点 */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #050508;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #00f3ff;
+      border: 1px solid #0a0a0f;
+    }
+
+    /* ========== 移动端虚拟方向键 ========== */
+    @media (max-width: 768px) {
+      #snake-container {
+        overflow: auto;
+        max-width: 100vw;
+      }
+
+      .mobile-controls {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+        gap: 8px;
+        width: 180px;
+        height: 180px;
+        margin: 15px auto;
+      }
+
+      .mobile-btn {
+        background: rgba(0, 243, 255, 0.2);
+        border: 1px solid #00f3ff;
+        color: #00f3ff;
+        font-family: 'Courier New', monospace;
+        font-weight: bold;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        user-select: none;
+        cursor: pointer;
+      }
+
+      .mobile-btn:active {
+        background: rgba(255, 0, 200, 0.4);
+        color: #ff00c8;
+        border-color: #ff00c8;
+      }
+
+      .btn-up { grid-column: 2; grid-row: 1; }
+      .btn-left { grid-column: 1; grid-row: 2; }
+      .btn-right { grid-column: 3; grid-row: 2; }
+      .btn-down { grid-column: 2; grid-row: 3; }
+    }
+
+    @media (min-width: 769px) {
+      .mobile-controls {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glitch-title">NEO.BLOG</div>
+
+  <nav class="cyber-nav">
+    <a href="#home">首页</a>
+    <a href="#games">游戏舱</a>
+    <a href="#posts">日志</a>
+    <a href="#about">终端</a>
+  </nav>
+
+  <main>
+    <section id="home" class="panel">
+      <h2>📡 钊哥大脑目前状态：已报废</h2>
+      <p>欢迎来到钊哥的博客。当前时间：<span id="sys-time"></span></p>
+      <p>钊哥：还在上鞋，成绩不好，稍微会玩点电脑，以前是洋鬼子，现在已经加入义和团！</p>
+      <p>砰砰砰砰砰砰，砰砰砰砰砰砰，砰砰砰砰砰砰砰砰砰砰砰砰，在光绪二十六年，神助拳义和团！</p>
+      <p>会的语言：python、c++、前端</p>
+      <p>精通的语言：？？？我有精通的语言吗</p>
+      <p>b站账号：会走路的鲱鱼罐头  （点个关注呗）</p>
+      <p>qq号:不告诉你🐶🐶🐶</p>
+      <p>tg号:昨天被封了😠😠😠</p>
+    </section>
+
+    <section id="games" class="panel">
+      <h2>🎮 游戏舱 // GAMES</h2>
+      <p>使用 WASD 或方向键控制贪吃蛇。撞墙或自噬将触发系统崩溃。</p>
+      <div id="snake-container">
+        <canvas id="snake-canvas" width="400" height="300"></canvas>
+      </div>
+      <!-- 移动端方向键（仅小屏显示） -->
+      <div class="mobile-controls">
+        <div class="mobile-btn btn-up">↑</div>
+        <div class="mobile-btn btn-left">←</div>
+        <div class="mobile-btn btn-right">→</div>
+        <div class="mobile-btn btn-down">↓</div>
+      </div>
+    </section>
+
+    <section id="posts" class="panel">
+      <h2>📜 最近日志</h2>
+      <ul style="list-style: square; padding-left: 20px; margin-top: 10px;">
+        <li>[2026-01-10] 更新成了现在的样子 &lt; 12ms</li>
+        
+      </ul>
+    </section>
+
+    <section id="about" class="panel">
+      <h2>💻 终端信息（假的）</h2>
+      <pre>
+USER: neo
+HOST: cyber.local
+OS:   BlackOS v9.4 (基于Debian)
+LANG: JavaScript / Python / Brainfuck
+STATUS: AWAKE
+      </pre>
+    </section>
+  </main>
+
+  <footer class="cyber-footer">
+    <p>© 2026 // ROOT@NEO.LOCAL // ALL RIGHTS RESERVED</p>
+    <p>警告：未经授权的访问将触发迪克的黑调的攻击</p>
+  </footer>
+
+  <script>
+    // ========== 实时系统时间 ==========
+    function updateSysTime() {
+      const now = new Date();
+      document.getElementById('sys-time').textContent = now.toLocaleString('zh-CN');
+    }
+    setInterval(updateSysTime, 1000);
+    updateSysTime();
+
+    // ========== 贪吃蛇游戏 ==========
+    const canvas = document.getElementById('snake-canvas');
+    const ctx = canvas.getContext('2d');
+
+    const gridSize = 15;
+    const tileCount = {
+      x: Math.floor(canvas.width / gridSize),
+      y: Math.floor(canvas.height / gridSize)
+    };
+
+    let snake = [
+      {x: 10, y: 10}
+    ];
+    let food = {};
+    let dx = 0, dy = 0;
+    let score = 0;
+    let gameRunning = true;
+
+    function randFood() {
+      food = {
+        x: Math.floor(Math.random() * tileCount.x),
+        y: Math.floor(Math.random() * tileCount.y)
+      };
+      // 避免食物刷在蛇身上
+      for (let segment of snake) {
+        if (segment.x === food.x && segment.y === food.y) {
+          return randFood();
+        }
+      }
+    }
+
+    randFood();
+
+    function drawRect(x, y, color) {
+      ctx.fillStyle = color;
+      ctx.fillRect(x * gridSize, y * gridSize, gridSize - 1, gridSize - 1);
+    }
+
+    function gameLoop() {
+  if (!gameRunning) {
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#ff0055';
+    ctx.font = 'bold 24px "Courier New", monospace';
+    ctx.fillText('SYSTEM CRASHED', canvas.width / 2, canvas.height / 2 - 15);
+
+    ctx.font = '18px "Courier New", monospace';
+    ctx.fillStyle = '#ff55aa';
+    ctx.fillText('Press R to restart', canvas.width / 2, canvas.height / 2 + 20);
+    return;
+  }
+
+  // 清屏
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // 🔥 关键修复：只有当有方向输入时才移动蛇
+  let head;
+  if (dx !== 0 || dy !== 0) {
+    head = { x: snake[0].x + dx, y: snake[0].y + dy };
+
+    // 碰撞检测（墙 or 自身）
+    if (
+      head.x < 0 || head.x >= tileCount.x ||
+      head.y < 0 || head.y >= tileCount.y ||
+      snake.some((seg, i) => i > 0 && seg.x === head.x && seg.y === head.y) // 只检查身体，不包括头自己
+    ) {
+      gameRunning = false;
+      return; // 下一帧会显示 crash
+    }
+
+    snake.unshift(head);
+
+    // 吃食物
+    if (head.x === food.x && head.y === food.y) {
+      score += 10;
+      randFood();
+    } else {
+      snake.pop();
+    }
+  } else {
+    // 没有方向，保持原样（不移动）
+    head = snake[0];
+  }
+
+  // 画蛇
+  snake.forEach((segment, i) => {
+    drawRect(segment.x, segment.y, i === 0 ? '#00f3ff' : '#00aaee');
+  });
+
+  // 画食物
+  drawRect(food.x, food.y, '#ff00c8');
+
+  // 画分数
+  ctx.fillStyle = '#b967ff';
+  ctx.font = '14px Courier New';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'top';
+  ctx.fillText(`SCORE: ${score}`, 5, 5);
+}
+
+
+
+    let gameInterval = setInterval(gameLoop, 120);
+
+    // 控制
+    document.addEventListener('keydown', (e) => {
+      if (!gameRunning && e.key.toLowerCase() === 'r') {
+        // 重启游戏
+        snake = [{x: 10, y: 10}];
+        dx = 0; dy = 0;
+        score = 0;
+        randFood();
+        gameRunning = true;
+        clearInterval(gameInterval);
+        gameInterval = setInterval(gameLoop, 120);
+        return;
+      }
+
+      switch(e.key) {
+        case 'ArrowUp': case 'w': case 'W':
+          if (dy === 0) { dx = 0; dy = -1; }
+          break;
+        case 'ArrowDown': case 's': case 'S':
+          if (dy === 0) { dx = 0; dy = 1; }
+          break;
+        case 'ArrowLeft': case 'a': case 'A':
+          if (dx === 0) { dx = -1; dy = 0; }
+          break;
+        case 'ArrowRight': case 'd': case 'D':
+          if (dx === 0) { dx = 1; dy = 0; }
+          break;
+      }
+    });
+
+    // ========== 移动端虚拟按钮控制 ==========
+    document.querySelector('.btn-up').addEventListener('click', () => {
+      if (dy === 0) { dx = 0; dy = -1; }
+    });
+    document.querySelector('.btn-down').addEventListener('click', () => {
+      if (dy === 0) { dx = 0; dy = 1; }
+    });
+    document.querySelector('.btn-left').addEventListener('click', () => {
+      if (dx === 0) { dx = -1; dy = 0; }
+    });
+    document.querySelector('.btn-right').addEventListener('click', () => {
+      if (dx === 0) { dx = 1; dy = 0; }
+    });
+  </script>
+</body>
 </html>
